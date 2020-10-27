@@ -1,14 +1,12 @@
 {
   "questions": [
     {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
+      "text": "first?",
+      "answer": "1"
     },
     {
-      "id": 2,
-      "title": "json-server",
-      "author": "typicode"
+      "text": "2nd?",
+      "answer": "2"
     }
   ]
 }
