@@ -1,0 +1,13 @@
+<form [formGroup]="form" (ngSubmit)="save()">
+    <div class="form-group">
+        <label for="question">Question</label>
+        <input formControlName="text" type="text" class="form-control" id="question">
+    </div>
+
+    <div class="form-group">
+        <label for="answer">Answer</label>
+        <input formControlName="answer" type="answer" class="form-control" id="answer">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
