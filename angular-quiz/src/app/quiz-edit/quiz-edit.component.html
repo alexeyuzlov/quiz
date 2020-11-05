@@ -1,13 +1,17 @@
 <form [formGroup]="form" (ngSubmit)="save()">
     <div class="form-group">
         <label for="question">Question</label>
-        <input formControlName="text" type="text" class="form-control" id="question">
+        <input formControlName="question" autocomplete="off" type="text" class="form-control" id="question">
+
+        <div>{{form.get('question').errors | json}}</div>
     </div>
 
     <div class="form-group">
         <label for="answer">Answer</label>
-        <input formControlName="answer" type="answer" class="form-control" id="answer">
+        <input formControlName="answer" autocomplete="off" type="answer" class="form-control" id="answer">
+
+        <div>{{form.get('answer').errors | json}}</div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button [disabled]="loading || !form.valid" type="submit" class="btn btn-primary">Submit</button>
 </form>

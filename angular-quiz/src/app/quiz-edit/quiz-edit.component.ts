@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { IQuestion, QuestionService } from '../question.service';
 
 @Component({
   selector: 'app-quiz-edit',
@@ -10,30 +11,36 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class QuizEditComponent implements OnInit {
   public form: FormGroup;
-  public id: number;
+
+  public loading = false;
+
+  private readonly _id: number;
 
   constructor(
-    private _http: HttpClient,
+    private _questionService: QuestionService,
     private _router: Router,
-    private _route: ActivatedRoute,
-  ) { }
+    route: ActivatedRoute,
+  ) {
+    this._id = +route.snapshot.paramMap.get('id');
+  }
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      text: new FormControl('', Validators.required),
+      question: new FormControl('', Validators.required),
       answer: new FormControl('', Validators.required),
     });
 
-    this.id = +this._route.snapshot.paramMap.get('id');
-    if (!this.id) {
-      // console.info('New record');
-    } else {
-      this._http.get(`/api/questions/${this.id}`).subscribe(
-        (question: any) => {
-          this.form.patchValue(question);
-        }
-      )
+    this.init();
+  }
+
+  public init() {
+    if (!this._id) {
+      return;
     }
+
+    this._questionService.find(this._id).subscribe(
+      (question: IQuestion) => this.form.patchValue(question)
+    );
   }
 
   save() {
@@ -41,17 +48,38 @@ export class QuizEditComponent implements OnInit {
       return;
     }
 
-    let fn;
-    if (!this.id) {
-      fn = this._http.post('/api/questions', this.form.value)
-    } else {
-      fn = this._http.put(`/api/questions/${this.id}`, this.form.value)
-    }
+    const fn = !this._id
+      ? this._questionService.create(this.form.value)
+      : this._questionService.edit(this._id, this.form.value);
 
+    this.loading = true;
     fn.subscribe(
       () => {
         this._router.navigate(['/master']);
+      },
+      (err: Error) => {
+        this._validate(err);
+        return err;
       }
-    )
+    );
+  }
+
+  // todo should be part of common rest service
+  private _validate(err) {
+    if (err instanceof HttpErrorResponse) {
+      const formError = err.error.data;
+
+      for (const key in formError) {
+        if (formError.hasOwnProperty(key)) {
+          console.info(key);
+          const control = this.form.get(key);
+          if (!control) {
+            continue;
+          }
+
+          control.setErrors({server: formError[key]});
+        }
+      }
+    }
   }
 }

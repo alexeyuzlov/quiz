@@ -1,5 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { finalize } from 'rxjs/operators';
+import { IQuestion, QuestionService } from '../question.service';
+import { Subscription } from 'rxjs';
+import { ConfirmService } from '../confirm.service';
 
 @Component({
   selector: 'app-quiz-master',
@@ -9,27 +12,46 @@ import { HttpClient } from '@angular/common/http';
 export class QuizMasterComponent implements OnInit, OnDestroy {
   public questions: IQuestion[] = [];
 
-  constructor(private _http: HttpClient) { }
+  public loading = false;
+
+  private _loadSub: Subscription;
+
+  constructor(
+    private readonly _questionService: QuestionService,
+    private readonly _confirmService: ConfirmService,
+  ) {
+  }
 
   ngOnInit(): void {
-    console.info('Start component quiz-master');
+    this.load();
+  }
 
-    // fetch('localhost:3000/questions').then(question)
+  public ngOnDestroy() {
+    this._loadSub.unsubscribe();
+  }
 
-    this._http.get('/api/questions').subscribe(
-      (questions: IQuestion[]) => {
-        this.questions = questions;
+  public load() {
+    this.loading = true;
+    this.questions = [];
+    this._loadSub = this._questionService.getAll().pipe(
+      finalize(() => this.loading = false)
+    ).subscribe(
+      (questions: IQuestion[]) => this.questions = questions
+    );
+  }
+
+  public remove(questionId: number) {
+    this._confirmService.show().then(
+      () => {
+        this.loading = true;
+        this._questionService.remove(questionId).pipe(
+          finalize(() => this.loading = false)
+        ).subscribe(
+          () => {
+            this.questions = this.questions.filter((q) => q.id !== questionId);
+          }
+        );
       }
-    )
+    );
   }
-
-  ngOnDestroy() {
-    console.info('quiz master destroyed');
-  }
-}
-
-interface IQuestion {
-  id: number;
-  text: string;
-  answer: string;
 }
