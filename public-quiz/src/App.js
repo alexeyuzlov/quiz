@@ -9,8 +9,10 @@ class App extends Component {
         this.state = {
             loading: false,
             items: [],
-            index: 0,
+            index: 0
         };
+
+        this.questions = [];
     }
 
     get current() {
@@ -40,7 +42,29 @@ class App extends Component {
     }
 
     showResults() {
-        console.info('Show results');
+        this.setState({
+            loading: true
+        });
+
+        const body = {
+            questions: this.questions
+        };
+
+        axios.post("http://sample.lan/api/public/quiz", body)
+            .then((response) => response.data)
+            .then(
+                ({data}) => {
+                    this.setState({
+                        items: data
+                    });
+                }
+            ).finally(
+            () => {
+                this.setState({
+                    loading: false
+                });
+            }
+        )
     }
 
     render() {
@@ -63,8 +87,13 @@ class App extends Component {
         }
     }
 
-    onSubmit(value) {
-        console.info(this.current, value);
+    onSubmit(answerId) {
+        console.info(this.current, answerId);
+
+        this.questions.push({
+            id: this.current.id,
+            answerIds: [answerId]
+        });
 
         this.setState((state) => ({
             index: state.index + 1

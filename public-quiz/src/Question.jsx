@@ -3,14 +3,17 @@ import React, {Component} from 'react';
 export class Question extends Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+
+        this.state = {
+            value: 0
+        };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
-        this.setState({value: event.target.value});
+        this.setState({value: +event.target.value});
     }
 
     handleSubmit(event) {
@@ -27,7 +30,7 @@ export class Question extends Component {
                 <h2>{question}</h2>
 
                 <form onSubmit={this.handleSubmit}>
-                    {answers.map(item => (
+                    {answers.map((item, index) => (
                         <div key={item.id}>
                             <label>
                                 <input type="radio" name="answers" value={item.id} onChange={this.handleChange}/>
