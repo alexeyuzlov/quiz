@@ -1,0 +1,8 @@
+<h1>Articles</h1>
+
+<button type="button" (click)="next()" [disabled]="!cursor || loading">Next</button>
+
+<div *ngFor="let article of articles">
+  <h4>#{{article.id}}&nbsp;{{article.title}}</h4>
+  <div>{{article.updatedAt | date : 'y/MMMM/dd HH:mm:ss'}}</div>
+</div>

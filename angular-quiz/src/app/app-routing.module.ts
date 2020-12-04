@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { QuizEditComponent } from './quiz-edit/quiz-edit.component';
 import { QuizMasterComponent } from './quiz-master/quiz-master.component';
+import { ArticlesComponent } from './articles.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
     component: QuizEditComponent
   },
   {
+    path: 'articles',
+    component: ArticlesComponent
+  },
+  {
     path: '',
     redirectTo: 'master',
     pathMatch: 'full'
@@ -27,4 +32,5 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

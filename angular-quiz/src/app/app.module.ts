@@ -8,13 +8,15 @@ import { QuizEditComponent } from './quiz-edit/quiz-edit.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavComponent } from './nav.component';
+import { ArticlesComponent } from './articles.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
     QuizMasterComponent,
-    QuizEditComponent
+    QuizEditComponent,
+    ArticlesComponent,
   ],
   imports: [
     BrowserModule,
